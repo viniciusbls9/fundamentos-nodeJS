@@ -69,7 +69,7 @@ app.post("/deposit", verifyIfExistsAccountCpf, (request, response) => {
   const statementOperation = {
     description,
     amount,
-    create_at: new Date(),
+    created_at: new Date(),
     type: 'credit'
   }
 
@@ -90,7 +90,7 @@ app.post("/withdraw", verifyIfExistsAccountCpf, (request, response) => {
 
   const statementOperation = {
     amount,
-    create_at: new Date(),
+    created_at: new Date(),
     type: 'debit'
   }
 
@@ -98,6 +98,19 @@ app.post("/withdraw", verifyIfExistsAccountCpf, (request, response) => {
 
   return response.status(201).send()
 
+})
+
+app.get("/statement/date", verifyIfExistsAccountCpf, (request, response) => {
+  const { customer } = request
+  const { date } = request.query
+
+  const dateFormat = new Date(date + " 00:00")
+
+  const statement =
+    customer.statement.filter(
+      (statement) => statement.created_at.toDateString() === new Date(dateFormat).toDateString())
+
+  return response.json(statement)
 })
 
 app.listen(3333)
